@@ -32,7 +32,7 @@ class BuzzerTraffic
     uint8_t DuratieAlerta;
     uint8_t VolumAlerta;
 
-    static BuzzerTraffic* Instance = nullptr;
+    static BuzzerTraffic  *Instance;
 
     //constructor cu parametri
     BuzzerTraffic(
@@ -44,10 +44,10 @@ class BuzzerTraffic
       uint8_t);
 
   public :
-    BuzzerTraffic* getInstance(
+   static BuzzerTraffic* getInstance(
       uint8_t ConfigFrecventaNormala,
       uint8_t ConfigDuratieNormalat,
-      uint8_t ConfigVolumNormala,
+      uint8_t ConfigVolumNormal,
       
       uint8_t ConfigFrecventaAlerta,
       uint8_t ConfigDuratieAlerta,

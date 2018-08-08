@@ -1,12 +1,13 @@
 #include "BuzzerClassTraffic.h"
 
-//#include "ConfigFileTraffic.h"
+BuzzerTraffic* BuzzerTraffic::Instance = nullptr ;
+
 
 BuzzerTraffic* BuzzerTraffic :: getInstance(
 
   uint8_t ConfigFrecventaNormala,
   uint8_t ConfigDuratieNormala,
-  uint8_t ConfigVolumNormala,
+  uint8_t ConfigVolumNormal,
 
 
   uint8_t ConfigFrecventaAlerta,
@@ -19,7 +20,7 @@ BuzzerTraffic* BuzzerTraffic :: getInstance(
 
       ConfigFrecventaNormala,
       ConfigDuratieNormala,
-      ConfigVolumNormala,
+      ConfigVolumNormal,
 
 
       ConfigFrecventaAlerta,

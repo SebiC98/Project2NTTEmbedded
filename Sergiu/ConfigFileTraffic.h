@@ -2,9 +2,9 @@
 #define ConfigFile
 
 //parametri buzzer
-const uint8_t ConfigFrecventaNormala = 100;
-const uint8_t ConfigDuratieNormalat = 8;
-const uint8_t ConfigVolumNormala = 10;
+const uint8_t ConfigFrecventaNormala = 200;
+const uint8_t ConfigDuratieNormala = 20;
+const uint8_t ConfigVolumNormal = 10;
 
 
 const uint8_t ConfigFrecventaAlerta = 155;
@@ -13,34 +13,31 @@ const uint8_t ConfigVolumAlerta = 15;
 //----------------------------------------------------------------------------------------------------------------
 
 //parametri control timp
-const uint8_t ConfigTimpVerdeNord;
-const uint8_t ConfigTimpRosuNord;
-const uint8_t ConfigTimpGalbenNord;
+const uint16_t ConfigTimpVerdeNord=5000;
+const uint16_t ConfigTimpGalbenNord=1000;
 
-const uint8_t ConfigTimpVerdeSud;
-const uint8_t ConfigTimpRosuNordSud;
-const uint8_t ConfigTimpGalbenNordSud;
+const uint16_t ConfigTimpVerdeSud=5000;
+const uint16_t ConfigTimpGalbenSud=1000;
 
-const uint8_t ConfigTimpVerdeVest;
-const uint8_t ConfigTimpRosuNordVest;
-const uint8_t ConfigTimpGalbenNordVest;
+const uint16_t ConfigTimpVerdeVest=5000;
+const uint16_t ConfigTimpGalbenVest=1000;
 
-const uint8_t ConfigTimpVerdeEst;
-const uint8_t ConfigTimpRosuEst;
-const uint8_t ConfigTimpGalbenEst;
+const uint16_t ConfigTimpVerdeEst=5000;
+const uint16_t ConfigTimpGalbenEst=1000;
 
-const uint8_t ConfigTimpVerdePietoni;
+const uint16_t ConfigTimpVerdePietoni=8000;
+const uint16_t ConfigTimpUrgenta = 8000;
 
 //------------------------------------------------------------------------------
 
 // pini leduri semafor masini
-const uint8_t ConfigPinVerdeNord;
-const uint8_t ConfigPinRosuNord;
-const uint8_t ConfigPinGalbenNord;
+const uint8_t ConfigPinVerdeNord=8;
+const uint8_t ConfigPinRosuNord=10;
+const uint8_t ConfigPinGalbenNord=13;
 
-const uint8_t ConfigPinVerdeSud;
-const uint8_t ConfigPinRosuSud;
-const uint8_t ConfigPinGalbenSud;
+const uint8_t ConfigPinVerdeSud=5;
+const uint8_t ConfigPinRosuSud=6;
+const uint8_t ConfigPinGalbenSud=7;
 
 const uint8_t ConfigPinVerdeVest;
 const uint8_t ConfigPinRosuVest;
@@ -53,11 +50,11 @@ const uint8_t ConfigPinGalbenEst;
 //-------------------------------------------------------------------------------
 
 //pini semafoare pietoni 
-const uint8_t ConfigRedPinNord;
-const uint8_t ConfigGreenPinNord;
+const uint8_t ConfigRedPinNord=11;
+const uint8_t ConfigGreenPinNord=9;
 
-const uint8_t ConfigRedPinSud;
-const uint8_t ConfigGreenPinSud;
+const uint8_t ConfigRedPinSud=2;
+const uint8_t ConfigGreenPinSud=3;
 
 const uint8_t ConfigRedPinVest;
 const uint8_t ConfigGreenPinVest;
