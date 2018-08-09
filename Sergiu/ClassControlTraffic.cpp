@@ -188,7 +188,7 @@ ControlTraffic ::  ControlTraffic (
 
   uint8_t ConfigRedPinEst,
   uint8_t ConfigGreenPinEst)
-{
+  {
   if (InstanceControl == nullptr ) {
     InstanceControl = new ControlTraffic(
       ConfigFrecventaNormala,
@@ -252,7 +252,7 @@ ControlTraffic ::  ControlTraffic (
       ConfigGreenPinEst);
   }
 
-}*/
+  }*/
 void ControlTraffic :: InitializareIntersectie() {
 
   Nord  =  SemaforMasina(PinVerdeNord, PinRosuNord, PinGalbenNord);
@@ -318,13 +318,13 @@ void ControlTraffic :: StateMachineDumb(uint8_t Comanda) {
 
         elapsedMillis timeElapsed;
         while (timeElapsed < TimpVerdePietoni) {
-           delay(500);
           (*SunetTrecere).RingBuzzerNormal();
+          delay(500);
           PietonNord.verde();
           PietonSud.verde();
           PietonVest.verde();
           PietonEst.verde();
-          
+
         }
       }
       break;
@@ -406,7 +406,7 @@ void ControlTraffic :: StateMachineDumb(uint8_t Comanda) {
         }
 
         while (timeElapsed < TimpVerdeVest) {
-          Est.VerdeOn();
+          Vest.VerdeOn();
           PietoniRosu();
         }
 
@@ -433,10 +433,10 @@ void ControlTraffic :: StateMachineDumb(uint8_t Comanda) {
           Est.GalbenOn();
           PietoniRosu();
         }
-
-
-        if (timeElapsed = !0) {
+        
+        if (timeElapsed =! 0) {
           timeElapsed = 0;
+          
         }
 
         while (timeElapsed < TimpVerdeEst) {
@@ -457,13 +457,17 @@ void ControlTraffic :: StateMachineDumb(uint8_t Comanda) {
         PietoniRosu();
 
       }
+      break;
   }
+}
+uint8_t ControlTraffic :: ControlIntersectie(){
+   
 }
 
 void ControlTraffic :: StateMachineUrgenta(uint8_t Comanda) {
 
   switch (Comanda) {
-    case 1 :
+    case 'N' :
       {
         PietoniRosu();
         Sud.RosuOn();
@@ -474,10 +478,21 @@ void ControlTraffic :: StateMachineUrgenta(uint8_t Comanda) {
         while (timeElapsed < TimpUrgenta) {
           Nord.VerdeOn();
         }
+
+         if (timeElapsed = !0) {
+          timeElapsed = 0;
+        }
+
+        while (timeElapsed < TimpGalbenNord) {
+          Nord.GalbenOn();
+          PietoniRosu();
+        }
+        
         Nord.RosuOn();
       }
       break;
-    case 2 : {
+    case 'S' : {
+        
         PietoniRosu();
         Vest.RosuOn();
         Est.RosuOn();
@@ -487,10 +502,21 @@ void ControlTraffic :: StateMachineUrgenta(uint8_t Comanda) {
         while (timeElapsed < TimpUrgenta) {
           Sud.VerdeOn();
         }
+
+         if (timeElapsed = !0) {
+          timeElapsed = 0;
+        }
+
+        while (timeElapsed < TimpGalbenNord) {
+          Sud.GalbenOn();
+          PietoniRosu();
+        }
+        
         Sud.RosuOn();
       }
       break;
-    case 3: {
+    case 'V': {
+        
         PietoniRosu();
         Sud.RosuOn();
         Est.RosuOn();
@@ -500,10 +526,21 @@ void ControlTraffic :: StateMachineUrgenta(uint8_t Comanda) {
         while (timeElapsed < TimpUrgenta) {
           Vest.VerdeOn();
         }
+
+         if (timeElapsed = !0) {
+          timeElapsed = 0;
+        }
+
+        while (timeElapsed < TimpGalbenNord) {
+          Vest.GalbenOn();
+          PietoniRosu();
+        } 
+        
         Vest.RosuOn();
       }
       break;
-    case 4 : {
+    case 'E' : {
+
         PietoniRosu();
         Sud.RosuOn();
         Nord.RosuOn();
@@ -513,6 +550,16 @@ void ControlTraffic :: StateMachineUrgenta(uint8_t Comanda) {
         while (timeElapsed < TimpUrgenta) {
           Est.VerdeOn();
         }
+
+         if (timeElapsed = !0) {
+          timeElapsed = 0;
+        }
+
+        while (timeElapsed < TimpGalbenNord) {
+          Est.GalbenOn();
+          PietoniRosu();
+        }
+        
         Est.RosuOn();
       }
       break ;
@@ -520,23 +567,52 @@ void ControlTraffic :: StateMachineUrgenta(uint8_t Comanda) {
 }
 void ControlTraffic :: TaskLoop() {
 
-  /*for (uint8_t index  = 0; index < 3 ; index ++) {
-    StateMachineDumb(index);
-  }*/
-      //GalbenIntermitent();
-  uint8_t comanda = 1;
 
-    if (comanda !=0) {
-    StateMachineUrgenta(comanda);
-    for (uint8_t index  = comanda + 1; index < 3 ; index ++) {
+  uint8_t comanda = 'E';
+
+  if (comanda == 0) {
+    for (uint8_t index  = 0; index < 5 ; index ++) {
       StateMachineDumb(index);
-      Serial.print('-');
     }
-    } else {
-    for (uint8_t index  = 0; index < 3 ; index ++) {
-      StateMachineDumb(index);
-      Serial.print('+');
+  }
+    else {
+
+      switch (comanda) {
+
+        case 'N' : {
+            StateMachineUrgenta('N');
+            for (uint8_t index = 2 ; index < 5 ; index++) {
+              StateMachineDumb(index);
+            }
+          }
+          break;
+        case 'S' : {
+            StateMachineUrgenta('S');
+            for (uint8_t index = 3 ; index < 5 ; index++) {
+              StateMachineDumb(index);
+            }
+          }
+          break;
+        case 'V' : {
+            StateMachineUrgenta('V');
+            for (uint8_t index = 4 ; index < 5 ; index++) {
+              StateMachineDumb(index);
+            }
+          }
+          break;
+        case 'E': {
+            StateMachineUrgenta('E');
+            for (uint8_t index = 0 ; index < 4 ; index++) {
+              StateMachineDumb(index);
+            }
+          }
+          break;
+        case 'F' : {
+            GalbenIntermitent();
+          }
+
+      }
     }
-    }
-}
+  }
+
 

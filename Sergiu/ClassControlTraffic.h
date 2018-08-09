@@ -7,6 +7,7 @@
 #include <ClassSemaforMasina.h>
 #include <SemaforPieton.h>
 #include <elapsedMillis.h>
+#include <SPI.h>
 
 class ControlTraffic
 {
