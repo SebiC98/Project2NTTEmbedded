@@ -1,8 +1,8 @@
 #include "ClassControlTraffic.h"
 
 ControlTraffic ControlObject
-  (
-  
+(
+
   ConfigFrecventaNormala,
   ConfigDuratieNormala,
   ConfigVolumNormal,
@@ -61,16 +61,22 @@ ControlTraffic ControlObject
   ConfigGreenPinVest,
 
   ConfigRedPinEst,
-  ConfigGreenPinEst);
+  ConfigGreenPinEst,
+  ConfigMOSI,
+  ConfigMISO,
+  ConfigSCK,
+  ConfigSS );
 
 void setup() {
+
+
   // put your setup code here, to run once:
   ControlObject.InitializareIntersectie();
   Serial.begin(9600);
- 
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  ControlObject.TaskLoop();
-}
+
+    // put your main code here, to run repeatedly:
+    ControlObject.TaskLoop();
+  }

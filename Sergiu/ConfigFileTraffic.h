@@ -40,7 +40,7 @@ const uint8_t ConfigPinVerdeSud=43;
 const uint8_t ConfigPinRosuSud=39;
 const uint8_t ConfigPinGalbenSud=41;
 
-const uint8_t ConfigPinVerdeVest=51;
+const uint8_t ConfigPinVerdeVest=44;
 const uint8_t ConfigPinRosuVest=47;
 const uint8_t ConfigPinGalbenVest=49;
 
@@ -58,9 +58,18 @@ const uint8_t ConfigRedPinSud=28;
 const uint8_t ConfigGreenPinSud=30;
 
 const uint8_t ConfigRedPinVest=48;
-const uint8_t ConfigGreenPinVest=50;
+const uint8_t ConfigGreenPinVest=46;
 
 const uint8_t ConfigRedPinEst=34;
 const uint8_t ConfigGreenPinEst=36;
+
+//----------------------------------------------------------
+
+//pini SPI mega 
+
+const uint8_t ConfigMOSI;
+const uint8_t ConfigMISO;
+const uint8_t ConfigSCK;
+const uint8_t ConfigSS;
 
 #endif

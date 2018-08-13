@@ -1,7 +1,5 @@
 #include "ClassControlTraffic.h"
 
-//ControlTraffic* ControlTraffic :: InstanceControl= nullptr;
-
 ControlTraffic ::  ControlTraffic (
 
   uint8_t ConfigFrecventaNormala,
@@ -62,7 +60,12 @@ ControlTraffic ::  ControlTraffic (
   uint8_t ConfigGreenPinVest,
 
   uint8_t ConfigRedPinEst,
-  uint8_t ConfigGreenPinEst
+  uint8_t ConfigGreenPinEst,
+
+  uint8_t ConfigMOSI ,
+  uint8_t CinfigMISO ,
+  uint8_t ConfigSCK ,
+  uint8_t ConfigSS
 )
 {
   FrecventaNormala  =  ConfigFrecventaNormala ;
@@ -125,134 +128,16 @@ ControlTraffic ::  ControlTraffic (
   RedPinEst = ConfigRedPinEst ;
   GreenPinEst = ConfigGreenPinEst ;
 
+  //--------------------------------------------------------------------------------
+  //Pini SPI
+
+    MOSI = ConfigMOSI; 
+    MISO = ConfigMISO;
+    SCK  = ConfigSCK;
+    SS = ConfigSS;
+
 }
 
-/*ControlTraffic* ControlTraffic :: getInstanceControl(
-
-  uint8_t ConfigFrecventaNormala,
-  uint8_t ConfigDuratieNormala,
-  uint8_t ConfigVolumNormal,
-
-
-  uint8_t ConfigFrecventaAlerta,
-  uint8_t ConfigDuratieAlerta,
-  uint8_t ConfigVolumAlerta,
-  //----------------------------------------------------------------------------------------------------------------
-
-  //parametri control timp
-  uint16_t ConfigTimpVerdeNord,
-  uint16_t ConfigTimpGalbenNord,
-
-  uint16_t ConfigTimpVerdeSud,
-  uint16_t ConfigTimpGalbenSud,
-
-  uint16_t ConfigTimpVerdeVest,
-  uint16_t ConfigTimpGalbenVest,
-
-  uint16_t ConfigTimpVerdeEst,
-  uint16_t ConfigTimpGalbenEst,
-
-  uint16_t ConfigTimpVerdePietoni,
-  uint16_t ConfigTimpGalbenIntermitent,
-  uint16_t ConfigTimpUrgenta,
-  //------------------------------------------------------------------------------
-
-  // pini leduri semafor masini
-  uint8_t ConfigPinVerdeNord,
-  uint8_t ConfigPinRosuNord,
-  uint8_t ConfigPinGalbenNord,
-
-  uint8_t ConfigPinVerdeSud,
-  uint8_t ConfigPinRosuSud,
-  uint8_t ConfigPinGalbenSud,
-
-  uint8_t ConfigPinVerdeVest,
-  uint8_t ConfigPinRosuVest,
-  uint8_t ConfigPinGalbenVest,
-
-  uint8_t ConfigPinVerdeEst,
-  uint8_t ConfigPinRosuEst,
-  uint8_t ConfigPinGalbenEst,
-
-  //-------------------------------------------------------------------------------
-
-  //pini semafoare pietoni
-  uint8_t ConfigRedPinNord,
-  uint8_t ConfigGreenPinNord,
-
-  uint8_t ConfigRedPinSud,
-  uint8_t ConfigGreenPinSud,
-
-  uint8_t ConfigRedPinVest,
-  uint8_t ConfigGreenPinVest,
-
-  uint8_t ConfigRedPinEst,
-  uint8_t ConfigGreenPinEst)
-  {
-  if (InstanceControl == nullptr ) {
-    InstanceControl = new ControlTraffic(
-      ConfigFrecventaNormala,
-      ConfigDuratieNormala,
-      ConfigVolumNormal,
-
-
-      ConfigFrecventaAlerta,
-      ConfigDuratieAlerta,
-      ConfigVolumAlerta,
-      //----------------------------------------------------------------------------------------------------------------
-
-      //parametri control timp
-      ConfigTimpVerdeNord,
-      ConfigTimpGalbenNord,
-
-      ConfigTimpVerdeSud,
-      ConfigTimpGalbenSud,
-
-      ConfigTimpVerdeVest,
-      ConfigTimpGalbenVest,
-
-      ConfigTimpVerdeEst,
-      ConfigTimpGalbenEst,
-
-      ConfigTimpVerdePietoni,
-      ConfigTimpGalbenIntermitent,
-      ConfigTimpUrgenta,
-      //------------------------------------------------------------------------------
-
-      // pini leduri semafor masini
-      ConfigPinVerdeNord,
-      ConfigPinRosuNord,
-      ConfigPinGalbenNord,
-
-      ConfigPinVerdeSud,
-      ConfigPinRosuSud,
-      ConfigPinGalbenSud,
-
-      ConfigPinVerdeVest,
-      ConfigPinRosuVest,
-      ConfigPinGalbenVest,
-
-      ConfigPinVerdeEst,
-      ConfigPinRosuEst,
-      ConfigPinGalbenEst,
-
-      //-------------------------------------------------------------------------------
-
-      //pini semafoare pietoni
-      ConfigRedPinNord,
-      ConfigGreenPinNord,
-
-      ConfigRedPinSud,
-      ConfigGreenPinSud,
-
-      ConfigRedPinVest,
-      ConfigGreenPinVest,
-
-      ConfigRedPinEst,
-      ConfigGreenPinEst);
-  }
-
-  }*/
 void ControlTraffic :: InitializareIntersectie() {
 
   Nord  =  SemaforMasina(PinVerdeNord, PinRosuNord, PinGalbenNord);
@@ -307,10 +192,13 @@ void ControlTraffic :: GalbenIntermitent() {
 }
 
 void ControlTraffic :: StateMachineDumb(uint8_t Comanda) {
+  uint8_t VerdeOn = 1;
+  uint8_t VerdeOff = 0;
 
   switch (Comanda) {
     case 0 :
       {
+        uint8_t CurrentState = 0;
         Nord.RosuOn();
         Sud.RosuOn();
         Vest.RosuOn();
@@ -318,24 +206,31 @@ void ControlTraffic :: StateMachineDumb(uint8_t Comanda) {
 
         elapsedMillis timeElapsed;
         while (timeElapsed < TimpVerdePietoni) {
-          (*SunetTrecere).RingBuzzerNormal();
           delay(500);
+          (*SunetTrecere).RingBuzzerNormal();
           PietonNord.verde();
           PietonSud.verde();
           PietonVest.verde();
           PietonEst.verde();
-
+          if (ControlIntersectie(VerdeOn , CurrentState) == 1) {
+            StateMachineDumb('B');
+          }
         }
+        break;
       }
-      break;
+
     case 1 :
       {
-
+        uint8_t CurrentState = 1;
         elapsedMillis timeElapsed;
         while (timeElapsed < TimpGalbenNord) {
           Nord.GalbenOn();
           PietoniRosu();
+          if ( ControlIntersectie(VerdeOff,  CurrentState) == 1 ) {
+            StateMachineDumb('B');
+          }
         }
+
         if (timeElapsed = !0) {
           timeElapsed = 0;
         }
@@ -343,29 +238,40 @@ void ControlTraffic :: StateMachineDumb(uint8_t Comanda) {
         while (timeElapsed < TimpVerdeNord) {
           Nord.VerdeOn();
           PietoniRosu();
+          if (ControlIntersectie(VerdeOn, CurrentState) == 1) {
+            StateMachineDumb('B');
+          }
         }
+
 
         if (timeElapsed = !0) {
           timeElapsed = 0;
         }
 
+
         while (timeElapsed < TimpGalbenNord) {
           Nord.GalbenOn();
           PietoniRosu();
+          if (ControlIntersectie(VerdeOff, CurrentState) == 1) {
+            StateMachineDumb('B');
+          }
         }
 
         Nord.RosuOn();
-        PietoniRosu();
+        break;
       }
 
-      break;
 
     case 2 :
       {
+        uint8_t CurrentState = 2;
         elapsedMillis timeElapsed;
         while (timeElapsed < TimpGalbenSud) {
           Sud.GalbenOn();
           PietoniRosu();
+          if (ControlIntersectie(VerdeOff, CurrentState) == 1) {
+            StateMachineDumb('B');
+          }
         }
 
         if (timeElapsed = !0) {
@@ -375,7 +281,11 @@ void ControlTraffic :: StateMachineDumb(uint8_t Comanda) {
         while (timeElapsed < TimpVerdeSud) {
           Sud.VerdeOn();
           PietoniRosu();
+          if (ControlIntersectie(VerdeOn , CurrentState) == 1) {
+            StateMachineDumb('B');
+          }
         }
+
         if (timeElapsed = !0) {
           timeElapsed = 0;
         }
@@ -383,86 +293,191 @@ void ControlTraffic :: StateMachineDumb(uint8_t Comanda) {
         while (timeElapsed < TimpGalbenSud) {
           Sud.GalbenOn();
           PietoniRosu();
+          if (ControlIntersectie(VerdeOff, CurrentState) == 1) {
+            StateMachineDumb('B');
+          }
         }
-
-
         Sud.RosuOn();
-        PietoniRosu();
-
+        break;
       }
-      break;
+
     case 3 :
       {
-        elapsedMillis timeElapsed;
 
+        uint8_t CurrentState = 3;
+        elapsedMillis timeElapsed;
         while (timeElapsed < TimpGalbenVest) {
           Vest.GalbenOn();
           PietoniRosu();
+          if (ControlIntersectie(VerdeOff, CurrentState) == 1) {
+            StateMachineDumb('B');
+          }
         }
-
 
         if (timeElapsed = !0) {
           timeElapsed = 0;
         }
+
 
         while (timeElapsed < TimpVerdeVest) {
           Vest.VerdeOn();
           PietoniRosu();
+          if (ControlIntersectie(VerdeOn, CurrentState) == 1) {
+            StateMachineDumb('B');
+          }
         }
 
         if (timeElapsed = !0) {
           timeElapsed = 0;
         }
 
+        while (timeElapsed < TimpGalbenVest) {
+          Vest.GalbenOn();
+          PietoniRosu();
+          if (ControlIntersectie(VerdeOff, CurrentState) == 1) {
+            StateMachineDumb('B');
+          }
+        }
+
+        Vest.RosuOn();
+        break;
+      }
+
+
+    case 4 :
+      {
+        uint8_t CurrentState = 4;
+        elapsedMillis timeElapsed;
+        while (timeElapsed < TimpGalbenEst) {
+          Est.GalbenOn();
+          PietoniRosu();
+          if (ControlIntersectie(VerdeOff, CurrentState) == 1) {
+            StateMachineDumb('B');
+          }
+        }
+
+        if (timeElapsed = ! 0) {
+          timeElapsed = 0;
+        }
+
+
+        while (timeElapsed < TimpVerdeEst) {
+          Est.VerdeOn();
+          PietoniRosu();
+          if (ControlIntersectie(VerdeOn, CurrentState) == 1) {
+            StateMachineDumb('B');
+          }
+        }
+
+        if (timeElapsed = !0) {
+          timeElapsed = 0;
+        }
+
+
+
+        while (timeElapsed < TimpGalbenEst) {
+          Est.GalbenOn();
+          PietoniRosu();
+          if (ControlIntersectie(VerdeOff, CurrentState) == 1) {
+            StateMachineDumb('B');
+          }
+        }
+
+        Est.RosuOn();
+        break;
+      }
+
+    case 'B' : {
+        break;
+      }
+      break;
+  }
+}
+
+
+uint8_t ControlTraffic :: ControlIntersectie(uint8_t IfVerde, uint8_t stare) {
+  uint8_t comanda ;
+  // comanda = ControlComanda();
+  uint8_t Urgenta = 0;
+  uint8_t PrivatePinSwitch = 3;
+  pinMode(PrivatePinSwitch, INPUT);
+  digitalWrite(PrivatePinSwitch, HIGH);
+
+  if (digitalRead(PrivatePinSwitch) == HIGH) {
+    comanda = 'S';
+    Serial.print("on");
+    Serial.println();
+    Urgenta = 1;
+
+
+    if (IfVerde == 0 ) {
+      StateMachineUrgenta(comanda);
+    }
+
+    else {
+      if (stare == 0)
+      {
+        elapsedMillis timeElapsed;
+        while (timeElapsed <  1000 ) {
+          (*SunetTrecere).RingBuzzerNormal();
+          delay(500);
+          PietonNord.verde();
+          PietonSud.verde();
+          PietonVest.verde();
+          PietonEst.verde();
+        }
+        StateMachineUrgenta(comanda);
+
+      }
+      else  if (stare == 1) {
+
+        elapsedMillis timeElapsed;
+        while (timeElapsed < TimpGalbenNord) {
+          Nord.GalbenOn();
+          PietoniRosu();
+        }
+
+        Nord.RosuOn();
+        StateMachineUrgenta(comanda);
+      }
+
+      else if (stare == 2) {
+        elapsedMillis timeElapsed;
+        while (timeElapsed < TimpGalbenSud) {
+          Sud.GalbenOn();
+          PietoniRosu();
+        }
+
+
+        Sud.RosuOn();
+        StateMachineUrgenta(comanda);
+      }
+      else if (stare == 3) {
+        elapsedMillis timeElapsed;
         while (timeElapsed < TimpGalbenVest) {
           Vest.GalbenOn();
           PietoniRosu();
         }
 
         Vest.RosuOn();
-        PietoniRosu();
+        StateMachineUrgenta(comanda);
+
       }
-
-      break;
-
-    case 4 :
-      {
+      else if (stare == 4) {
         elapsedMillis timeElapsed;
-
-        while (timeElapsed < TimpGalbenEst) {
-          Est.GalbenOn();
-          PietoniRosu();
-        }
-        
-        if (timeElapsed =! 0) {
-          timeElapsed = 0;
-          
-        }
-
-        while (timeElapsed < TimpVerdeEst) {
-          Est.VerdeOn();
-          PietoniRosu();
-        }
-
-        if (timeElapsed = !0) {
-          timeElapsed = 0;
-        }
-
         while (timeElapsed < TimpGalbenEst) {
           Est.GalbenOn();
           PietoniRosu();
         }
 
         Est.RosuOn();
-        PietoniRosu();
-
+        StateMachineUrgenta(comanda);
       }
-      break;
+    }
   }
+  return Urgenta;
 }
-uint8_t ControlTraffic :: ControlIntersectie(){
-   
-}
+
 
 void ControlTraffic :: StateMachineUrgenta(uint8_t Comanda) {
 
@@ -474,12 +489,14 @@ void ControlTraffic :: StateMachineUrgenta(uint8_t Comanda) {
         Vest.RosuOn();
         Est.RosuOn();
 
+
         elapsedMillis timeElapsed;
         while (timeElapsed < TimpUrgenta) {
           Nord.VerdeOn();
+          PietoniRosu();
         }
 
-         if (timeElapsed = !0) {
+        if (timeElapsed = !0) {
           timeElapsed = 0;
         }
 
@@ -487,12 +504,17 @@ void ControlTraffic :: StateMachineUrgenta(uint8_t Comanda) {
           Nord.GalbenOn();
           PietoniRosu();
         }
-        
+
         Nord.RosuOn();
+        for (index  = 2; index < 5 ; index ++) {
+          StateMachineDumb(index);
+        }
+        break;
       }
-      break;
+
+
     case 'S' : {
-        
+
         PietoniRosu();
         Vest.RosuOn();
         Est.RosuOn();
@@ -501,22 +523,27 @@ void ControlTraffic :: StateMachineUrgenta(uint8_t Comanda) {
         elapsedMillis timeElapsed;
         while (timeElapsed < TimpUrgenta) {
           Sud.VerdeOn();
+          PietoniRosu();
         }
 
-         if (timeElapsed = !0) {
+        if (timeElapsed = !0) {
           timeElapsed = 0;
         }
 
-        while (timeElapsed < TimpGalbenNord) {
+        while (timeElapsed < TimpGalbenSud) {
           Sud.GalbenOn();
           PietoniRosu();
         }
-        
+
         Sud.RosuOn();
+        for (index  = 3; index < 5 ; index ++) {
+          StateMachineDumb(index);
+        }
+        break;
       }
-      break;
+
     case 'V': {
-        
+
         PietoniRosu();
         Sud.RosuOn();
         Est.RosuOn();
@@ -525,20 +552,24 @@ void ControlTraffic :: StateMachineUrgenta(uint8_t Comanda) {
         elapsedMillis timeElapsed;
         while (timeElapsed < TimpUrgenta) {
           Vest.VerdeOn();
+          PietoniRosu();
         }
-
-         if (timeElapsed = !0) {
+        if (timeElapsed = !0) {
           timeElapsed = 0;
         }
 
-        while (timeElapsed < TimpGalbenNord) {
+        while (timeElapsed < TimpGalbenVest) {
           Vest.GalbenOn();
           PietoniRosu();
-        } 
-        
+        }
+
         Vest.RosuOn();
+        index = 4;
+        StateMachineDumb(index);
+
+        break;
       }
-      break;
+
     case 'E' : {
 
         PietoniRosu();
@@ -549,70 +580,34 @@ void ControlTraffic :: StateMachineUrgenta(uint8_t Comanda) {
         elapsedMillis timeElapsed;
         while (timeElapsed < TimpUrgenta) {
           Est.VerdeOn();
+          PietoniRosu();
         }
 
-         if (timeElapsed = !0) {
+        if (timeElapsed = !0) {
           timeElapsed = 0;
         }
 
-        while (timeElapsed < TimpGalbenNord) {
+        while (timeElapsed < TimpGalbenEst) {
           Est.GalbenOn();
           PietoniRosu();
         }
-        
+
         Est.RosuOn();
+        for (index  = 0; index < 5 ; index ++) {
+          StateMachineDumb(index);
+        }
+        break ;
       }
-      break ;
+
   }
 }
+
+
 void ControlTraffic :: TaskLoop() {
-
-
-  uint8_t comanda = 'E';
-
-  if (comanda == 0) {
-    for (uint8_t index  = 0; index < 5 ; index ++) {
-      StateMachineDumb(index);
-    }
+  for (index  = 0; index < 5 ; index ++) {
+    StateMachineDumb(index);
   }
-    else {
-
-      switch (comanda) {
-
-        case 'N' : {
-            StateMachineUrgenta('N');
-            for (uint8_t index = 2 ; index < 5 ; index++) {
-              StateMachineDumb(index);
-            }
-          }
-          break;
-        case 'S' : {
-            StateMachineUrgenta('S');
-            for (uint8_t index = 3 ; index < 5 ; index++) {
-              StateMachineDumb(index);
-            }
-          }
-          break;
-        case 'V' : {
-            StateMachineUrgenta('V');
-            for (uint8_t index = 4 ; index < 5 ; index++) {
-              StateMachineDumb(index);
-            }
-          }
-          break;
-        case 'E': {
-            StateMachineUrgenta('E');
-            for (uint8_t index = 0 ; index < 4 ; index++) {
-              StateMachineDumb(index);
-            }
-          }
-          break;
-        case 'F' : {
-            GalbenIntermitent();
-          }
-
-      }
-    }
-  }
+  //GalbenIntermitent();
+}
 
 

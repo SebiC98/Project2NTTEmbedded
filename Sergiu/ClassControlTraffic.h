@@ -72,13 +72,20 @@ class ControlTraffic
 
     uint8_t RedPinEst;
     uint8_t GreenPinEst;
-    
-    //static ControlTraffic* InstanceControl;
+    uint8_t index;
 
-     
+    //------------------------
+    //Pini SPI pentru mega
+    uint8_t MOSI ;
+    uint8_t MISO ;
+    uint8_t SCK ;
+    uint8_t SS ;
+
+
+
   public :
 
-   ControlTraffic(
+    ControlTraffic(
 
       uint8_t ConfigFrecventaNormala,
       uint8_t ConfigDuratieNormalat,
@@ -138,7 +145,13 @@ class ControlTraffic
       uint8_t ConfigGreenPinVest,
 
       uint8_t ConfigRedPinEst,
-      uint8_t ConfigGreenPinEst
+      uint8_t ConfigGreenPinEst,
+
+      uint8_t ConfigMOSI ,
+      uint8_t ConfigMISO ,
+      uint8_t ConfigSCK ,
+      uint8_t ConfigSS 
+
     );
     /*static ControlTraffic * getInstanceControl(
 
@@ -202,7 +215,7 @@ class ControlTraffic
       uint8_t ConfigRedPinEst,
       uint8_t ConfigGreenPinEst
 
-    );*/
+      );*/
 
     BuzzerTraffic *SunetTrecere;
 
@@ -221,9 +234,10 @@ class ControlTraffic
     void TaskLoop();
     void StateMachineDumb(uint8_t Comanda);
     void StateMachineUrgenta(uint8_t Comanda);
-    uint8_t ControlIntersectie();
+    uint8_t ControlIntersectie(uint8_t IFVerde, uint8_t stare);
     void PietoniRosu();
     void GalbenIntermitent();
+    uint8_t ComandaControl();
 
 };
 
