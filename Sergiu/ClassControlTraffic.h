@@ -153,69 +153,7 @@ class ControlTraffic
       uint8_t ConfigSS 
 
     );
-    /*static ControlTraffic * getInstanceControl(
-
-      uint8_t ConfigFrecventaNormala,
-      uint8_t ConfigDuratieNormala,
-      uint8_t ConfigVolumNormala,
-
-
-      uint8_t ConfigFrecventaAlerta,
-      uint8_t ConfigDuratieAlerta,
-      uint8_t ConfigVolumAlerta,
-      //----------------------------------------------------------------------------------------------------------------
-
-      //parametri control timp
-      uint16_t ConfigTimpVerdeNord,
-      uint16_t ConfigTimpGalbenNord,
-
-      uint16_t ConfigTimpVerdeSud,
-      uint16_t ConfigTimpGalbenSud,
-
-      uint16_t ConfigTimpVerdeVest,
-      uint16_t ConfigTimpGalbenVest,
-
-      uint16_t ConfigTimpVerdeEst,
-      uint16_t ConfigTimpGalbenEst,
-
-      uint16_t ConfigTimpVerdePietoni,
-      uint16_t ConfigTimpGalbenIntermitent,
-      uint16_t ConfigTimpUrgenta,
-      //------------------------------------------------------------------------------
-
-      // pini leduri semafor masini
-      uint8_t ConfigPinVerdeNord,
-      uint8_t ConfigPinRosuNord,
-      uint8_t ConfigPinGalbenNord,
-
-      uint8_t ConfigPinVerdeSud,
-      uint8_t ConfigPinRosuSud,
-      uint8_t ConfigPinGalbenSud,
-
-      uint8_t ConfigPinVerdeVest,
-      uint8_t ConfigPinRosuVest,
-      uint8_t ConfigPinGalbenVest,
-
-      uint8_t ConfigPinVerdeEst,
-      uint8_t ConfigPinRosuEst,
-      uint8_t ConfigPinGalbenEst,
-
-      //-------------------------------------------------------------------------------
-
-      //pini semafoare pietoni
-      uint8_t ConfigRedPinNord,
-      uint8_t ConfigGreenPinNord,
-
-      uint8_t ConfigRedPinSud,
-      uint8_t ConfigGreenPinSud,
-
-      uint8_t ConfigRedPinVest,
-      uint8_t ConfigGreenPinVest,
-
-      uint8_t ConfigRedPinEst,
-      uint8_t ConfigGreenPinEst
-
-      );*/
+ 
 
     BuzzerTraffic *SunetTrecere;
 
@@ -238,6 +176,7 @@ class ControlTraffic
     void PietoniRosu();
     void GalbenIntermitent();
     uint8_t ComandaControl();
+    void ControlTranzitie(uint8_t IfVerde, uint8_t stare,uint8_t comanda);
 
 };
 

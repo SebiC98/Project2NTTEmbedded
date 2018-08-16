@@ -40,9 +40,9 @@ const uint8_t ConfigPinVerdeSud=43;
 const uint8_t ConfigPinRosuSud=39;
 const uint8_t ConfigPinGalbenSud=41;
 
-const uint8_t ConfigPinVerdeVest=44;
-const uint8_t ConfigPinRosuVest=47;
-const uint8_t ConfigPinGalbenVest=49;
+const uint8_t ConfigPinVerdeVest=49;
+const uint8_t ConfigPinRosuVest=44;
+const uint8_t ConfigPinGalbenVest=47;
 
 const uint8_t ConfigPinVerdeEst=35;
 const uint8_t ConfigPinRosuEst=31;

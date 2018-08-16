@@ -131,10 +131,10 @@ ControlTraffic ::  ControlTraffic (
   //--------------------------------------------------------------------------------
   //Pini SPI
 
-    MOSI = ConfigMOSI; 
-    MISO = ConfigMISO;
-    SCK  = ConfigSCK;
-    SS = ConfigSS;
+  MOSI = ConfigMOSI;
+  MISO = ConfigMISO;
+  SCK  = ConfigSCK;
+  SS = ConfigSS;
 
 }
 
@@ -394,88 +394,113 @@ void ControlTraffic :: StateMachineDumb(uint8_t Comanda) {
   }
 }
 
+void  ControlTraffic :: ControlTranzitie(uint8_t IfVerde, uint8_t stare, uint8_t comanda) {
 
-uint8_t ControlTraffic :: ControlIntersectie(uint8_t IfVerde, uint8_t stare) {
-  uint8_t comanda ;
-  // comanda = ControlComanda();
-  uint8_t Urgenta = 0;
-  uint8_t PrivatePinSwitch = 3;
-  pinMode(PrivatePinSwitch, INPUT);
-  digitalWrite(PrivatePinSwitch, HIGH);
+  if (IfVerde == 0 ) {
+    StateMachineUrgenta(comanda);
+  }
 
-  if (digitalRead(PrivatePinSwitch) == HIGH) {
-    comanda = 'S';
-    Serial.print("on");
-    Serial.println();
-    Urgenta = 1;
+  else {
+    if (stare == 0)
+    {
+      elapsedMillis timeElapsed;
+      while (timeElapsed <  1000 ) {
+        (*SunetTrecere).RingBuzzerNormal();
+        delay(500);
+        PietonNord.verde();
+        PietonSud.verde();
+        PietonVest.verde();
+        PietonEst.verde();
+      }
+      StateMachineUrgenta(comanda);
 
+    }
+    else  if (stare == 1) {
 
-    if (IfVerde == 0 ) {
+      elapsedMillis timeElapsed;
+      while (timeElapsed < TimpGalbenNord) {
+        Nord.GalbenOn();
+        PietoniRosu();
+      }
+
+      Nord.RosuOn();
       StateMachineUrgenta(comanda);
     }
 
-    else {
-      if (stare == 0)
-      {
-        elapsedMillis timeElapsed;
-        while (timeElapsed <  1000 ) {
-          (*SunetTrecere).RingBuzzerNormal();
-          delay(500);
-          PietonNord.verde();
-          PietonSud.verde();
-          PietonVest.verde();
-          PietonEst.verde();
-        }
-        StateMachineUrgenta(comanda);
-
-      }
-      else  if (stare == 1) {
-
-        elapsedMillis timeElapsed;
-        while (timeElapsed < TimpGalbenNord) {
-          Nord.GalbenOn();
-          PietoniRosu();
-        }
-
-        Nord.RosuOn();
-        StateMachineUrgenta(comanda);
+    else if (stare == 2) {
+      elapsedMillis timeElapsed;
+      while (timeElapsed < TimpGalbenSud) {
+        Sud.GalbenOn();
+        PietoniRosu();
       }
 
-      else if (stare == 2) {
-        elapsedMillis timeElapsed;
-        while (timeElapsed < TimpGalbenSud) {
-          Sud.GalbenOn();
-          PietoniRosu();
-        }
 
-
-        Sud.RosuOn();
-        StateMachineUrgenta(comanda);
+      Sud.RosuOn();
+      StateMachineUrgenta(comanda);
+    }
+    else if (stare == 3) {
+      elapsedMillis timeElapsed;
+      while (timeElapsed < TimpGalbenVest) {
+        Vest.GalbenOn();
+        PietoniRosu();
       }
-      else if (stare == 3) {
-        elapsedMillis timeElapsed;
-        while (timeElapsed < TimpGalbenVest) {
-          Vest.GalbenOn();
-          PietoniRosu();
-        }
 
-        Vest.RosuOn();
-        StateMachineUrgenta(comanda);
+      Vest.RosuOn();
+      StateMachineUrgenta(comanda);
 
+    }
+    else if (stare == 4) {
+      elapsedMillis timeElapsed;
+      while (timeElapsed < TimpGalbenEst) {
+        Est.GalbenOn();
+        PietoniRosu();
       }
-      else if (stare == 4) {
-        elapsedMillis timeElapsed;
-        while (timeElapsed < TimpGalbenEst) {
-          Est.GalbenOn();
-          PietoniRosu();
-        }
 
-        Est.RosuOn();
-        StateMachineUrgenta(comanda);
-      }
+      Est.RosuOn();
+      StateMachineUrgenta(comanda);
     }
   }
-  return Urgenta;
+}
+
+uint8_t ControlTraffic :: ControlIntersectie(uint8_t IfVerde, uint8_t stare) {
+  uint8_t comanda;
+  uint8_t Urgenta = 0;
+
+  comanda = ComandaControl();
+  Serial.print(comanda);
+  Serial.println();
+
+  switch (comanda) {
+
+    case 78 : {
+        Urgenta = 1;
+        ControlTranzitie(IfVerde, stare, comanda);
+        return Urgenta;
+
+      }
+      break;
+      
+    case 83 : {
+        Urgenta = 1;
+        ControlTranzitie(IfVerde, stare, comanda);
+        return Urgenta;
+      }
+      break;
+      
+    case 69: {
+        Urgenta = 1;
+        ControlTranzitie(IfVerde, stare, comanda);
+        return Urgenta;
+      }
+      break;
+      
+    case 86 : {
+        Urgenta = 1;
+        ControlTranzitie(IfVerde, stare, comanda);
+        return Urgenta;
+      }
+      break;
+  }
 }
 
 
@@ -600,6 +625,21 @@ void ControlTraffic :: StateMachineUrgenta(uint8_t Comanda) {
       }
 
   }
+}
+
+uint8_t ControlTraffic :: ComandaControl() {
+  uint8_t confirmare = 'Q';
+  uint8_t directie;
+
+  pinMode(MISO, OUTPUT);
+  SPCR |= _BV(SPE);
+
+  if ((SPSR & (1 << SPIF)) != 0)
+  {
+    directie = SPDR;
+    Serial.print(directie);
+  }
+  return directie;
 }
 
 
